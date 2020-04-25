@@ -49,6 +49,8 @@ public class JsonObject {
             entry.getValue().forEach(o->{
                 if(o instanceof String)
                     sb.append("\"").append(o).append("\"").append(",");
+                else
+                    sb.append(o.toString()).append(",");
             });
             sb.append("]");
             sb.append("\n");

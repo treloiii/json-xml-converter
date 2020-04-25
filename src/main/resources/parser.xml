@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<person>
+<person at="roror">
     <name>mike</name>
     <age>23</age>
-    <languages>
-        <language>Java</language>
+    <languages object="true">
+        <language name="obj">Java</language>
         <language>C#</language>
         <language>C#</language>
     </languages>
+    person
 </person>

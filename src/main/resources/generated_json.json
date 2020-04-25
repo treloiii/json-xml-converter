@@ -1,9 +1,15 @@
 {
 "person":{
+"_at":"roror",
 "name":"mike",
 "age":"23",
 "languages":{
-"language":["Java","C#","C#"]
-}
+"_object":"true",
+"language":[{
+"_name":"obj",
+"__text":"Java"
+},"C#","C#"]
+},
+"__text":"person"
 }
 }

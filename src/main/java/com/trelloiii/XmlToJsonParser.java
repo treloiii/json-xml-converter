@@ -1,9 +1,6 @@
 package com.trelloiii;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,17 +50,38 @@ public class XmlToJsonParser extends AbstractParser {
     private void deepParse(Element parent,JsonObject jsonObject) throws IOException {
         if(hasChildNodes(parent)) {
             JsonObject jsonObject1=new JsonObject();
+            if(parent.hasAttributes()){
+                NamedNodeMap nodeMap=parent.getAttributes();
+                for(int i=0;i< nodeMap.getLength();i++){
+                    Node attribute=nodeMap.item(i);
+                    jsonObject1.add(attribute.getTextContent(),"_"+attribute.getNodeName());
+                }
+            }
             jsonObject.add(jsonObject1,parent.getTagName());
             NodeList childNodes = parent.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
-                Element child=(Element)childNodes.item(i);
-                deepParse(child,jsonObject1);
+                Node child=childNodes.item(i);
+                if(child.getNodeType()==Node.ELEMENT_NODE)
+                    deepParse((Element)child,jsonObject1);
+                else if(child.getNodeType()==Node.TEXT_NODE)
+                    jsonObject1.add(child.getTextContent(),"__text");
             }
         }
         else{
-            jsonObject.add(parent.getTextContent(),parent.getTagName());
+            if(parent.hasAttributes()){
+                JsonObject jsonObject1=new JsonObject();
+                NamedNodeMap nodeMap=parent.getAttributes();
+                for(int i=0;i< nodeMap.getLength();i++){
+                    Node attribute=nodeMap.item(i);
+                    jsonObject1.add(attribute.getTextContent(),"_"+attribute.getNodeName());
+                }
+                jsonObject1.add(parent.getTextContent(),"__text");
+                jsonObject.add(jsonObject1,parent.getTagName());
+            }
+            else {
+                jsonObject.add(parent.getTextContent(), parent.getTagName());
+            }
         }
-        //TODO make attribute parsing
     }
     private boolean hasChildNodes(Node node){
         if(node.hasChildNodes()){
