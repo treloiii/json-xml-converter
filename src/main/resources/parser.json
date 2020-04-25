@@ -1,10 +1,29 @@
-{
+[{
   "person":{
     "name":"mike",
     "age":23,
     "languages":["Java","C#","C++",{
       "object_in": "in_array",
       "arr": [1,2,3]
-    }]
+    }],
+    "dog": {
+      "name": "doggy",
+      "color": "brown"
+    }
   }
-}
+},
+  {
+    "person":{
+      "name":"mike",
+      "age":23,
+      "languages":["Java","C#","C++",{
+        "object_in": "in_array",
+        "arr": [1,2,3]
+      }],
+      "dog": {
+        "name": "doggy",
+        "color": "brown"
+      }
+    }
+  }
+]

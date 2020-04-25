@@ -10,7 +10,6 @@ public class JsonObject extends AbstractParsingObject {
     public String toString() {
         StringBuilder sb=new StringBuilder();
         sb.append("{");
-        sb.append("\n");
         for (Map.Entry<String,Object> entry:values.entrySet()) {
             sb.append("\"").append(entry.getKey()).append("\"");
             sb.append(":");
@@ -19,7 +18,6 @@ public class JsonObject extends AbstractParsingObject {
             else
                 sb.append(entry.getValue().toString());
             sb.append(",");
-            sb.append("\n");
         }
         for(Map.Entry<String,List<Object>> entry:arrays.entrySet()){
             sb.append("\"").append(entry.getKey()).append("\"");
@@ -31,7 +29,6 @@ public class JsonObject extends AbstractParsingObject {
                     sb.append(o.toString()).append(",");
             });
             sb.append("]");
-            sb.append("\n");
             sb.append(",");
         }
         if(sb.charAt(sb.length()-3)==']')

@@ -4,8 +4,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 import java.io.FileReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +34,7 @@ public class JsonToXmlParser extends AbstractParser {
             XmlObject object = new XmlObject();
             deepParse(jsonElement, object);
             String xml=validXml(object.toString());
-            generateOutputFile(xml);
+            generateOutputFile(new XmlFormatter().format(xml));
         }
         catch (Exception e){
             e.printStackTrace();
@@ -32,53 +42,46 @@ public class JsonToXmlParser extends AbstractParser {
     }
     private String validXml(String o){
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
-                "\n" +
-                o;
+                "\n" +"<root>"+
+                o+"</root>";
     }
-    private void deepParse(JsonElement element, XmlObject object){
-        for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
-            JsonElement jsonElement=entry.getValue();
-            if(jsonElement.isJsonObject()) {
-                XmlObject object1=new XmlObject();
-                System.out.println("object : "+entry.getKey());
-                deepParse(entry.getValue(), object1);
-                object.add(object1,entry.getKey());
-            }
-            else if(jsonElement.isJsonArray()){
-                System.out.println("array : "+entry.getKey());
-//                    XmlObject object1=new XmlObject();
-                JsonArray array=normalize(jsonElement.getAsJsonArray());
-                List<Object> arr=new ArrayList<>();
-                for(JsonElement el:array){
-                    if(el.isJsonPrimitive())
-                        arr.add(el.getAsJsonPrimitive().toString());
-                    else {
-                        XmlObject object2=new XmlObject();
-                        arr.add(object2);
-                        deepParse(el, object2);
-                    }
+    protected void deepParse(JsonElement element, AbstractParsingObject object){
+        if(element.isJsonObject()) {
+            for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
+                JsonElement jsonElement = entry.getValue();
+                if (jsonElement.isJsonObject()) {
+                    XmlObject object1 = new XmlObject();
+                    deepParse(entry.getValue(), object1);
+                    object.add(object1, entry.getKey());
+                } else if (jsonElement.isJsonArray()) {
+                    parseJsonArray(jsonElement,entry.getKey(),object);
+                } else if (jsonElement.isJsonPrimitive()) {
+                    object.add(jsonElement.getAsJsonPrimitive().toString(), entry.getKey());
                 }
-                object.addArray(arr,entry.getKey());
             }
-            else if(jsonElement.isJsonPrimitive()){
-                System.out.println("primitive : "+entry.getKey());
-//                    XmlObject object1=new XmlObject();
-                object.add(jsonElement.getAsJsonPrimitive().toString(),entry.getKey());
-            }
-//            }
-//            System.out.println(object);
         }
-//        else if(element.isJsonArray()){
-//            JsonArray array=normalize(element.getAsJsonArray());
-//            for(JsonElement jsonElement:array){
-//                deepParse(jsonElement,object);
-//            }
-//        }
-//        else if(element.isJsonPrimitive()){
-//            object.add(element.getAsJsonPrimitive().toString(),"__text");
-//        }
+        else if(element.isJsonArray()){
+            parseJsonArray(element,"_arr",object);
+        }
+        else if(element.isJsonPrimitive()){
+            String primitive=element.getAsJsonPrimitive().toString();
+            object.add(primitive,"primitive");
+        }
     }
-
+    private void parseJsonArray(JsonElement element,String arrayKey,AbstractParsingObject object){
+        JsonArray array = normalize(element.getAsJsonArray());
+        List<Object> arr = new ArrayList<>();
+        for (JsonElement el : array) {
+            if (el.isJsonPrimitive())
+                arr.add(el.getAsJsonPrimitive().toString());
+            else {
+                XmlObject object2 = new XmlObject();
+                arr.add(object2);
+                deepParse(el, object2);
+            }
+        }
+        object.addArray(arr, arrayKey);
+    }
     private JsonArray normalize(JsonArray jsonArray){
         for(int index=0;index<jsonArray.size();index++){
             JsonElement element=jsonArray.get(index);

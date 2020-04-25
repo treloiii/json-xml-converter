@@ -1,5 +1,9 @@
 package com.trelloiii;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.sun.org.apache.xerces.internal.dom.ElementImpl;
 import org.w3c.dom.*;
 
@@ -41,7 +45,9 @@ public class XmlToJsonParser extends AbstractParser {
             Element parent = document.getDocumentElement();
             JsonObject jsonObject=new JsonObject();
             deepParse(parent,jsonObject);
-            generateOutputFile(jsonObject);
+            Gson gson=new GsonBuilder().setPrettyPrinting().create();
+            JsonElement json=JsonParser.parseString(jsonObject.toString());
+            generateOutputFile(gson.toJson(json));
             deleteTempFile(tempFile);
         }
         catch (Exception e){
