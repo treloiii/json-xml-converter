@@ -1,9 +1,10 @@
 {
-  "name": "mike",
-  "age": 23,
-  "languages": [
-    "Java",
-    "C#",
-    "C++"
-  ]
+  "person":{
+    "name":"mike",
+    "age":23,
+    "languages":["Java","C#","C++",{
+      "object_in": "in_array",
+      "arr": [1,2,3]
+    }]
+  }
 }

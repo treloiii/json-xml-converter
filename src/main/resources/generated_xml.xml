@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<person>
+   <name>"mike"</name>
+   <age>23</age>
+   <languages>"Java"</languages>
+   <languages>"C#"</languages>
+   <languages>"C++"</languages>
+   <languages>
+       <object_in>"in_array"</object_in>
+   <arr>1</arr>
+   <arr>2</arr>
+   <arr>3</arr>
+   
+  </languages>
+   </person>
+   

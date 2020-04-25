@@ -2,32 +2,10 @@ package com.trelloiii;
 
 import java.util.*;
 
-public class JsonObject {
-    private Map<String,Object> values;
-    private Map<String,List<Object>> arrays;
-
+public class JsonObject extends AbstractParsingObject {
     public JsonObject() {
-        values=new LinkedHashMap<>();
-        arrays=new LinkedHashMap<>();
+        super();
     }
-
-    public void add(Object o, String key){
-        if(arrays.containsKey(key)){
-            List<Object> list=arrays.get(key);
-            list.add(o);
-            return;
-        }
-        if(values.containsKey(key)){
-            Object removed=values.remove(key);
-            List<Object> newList=new ArrayList<>();
-            newList.add(removed);
-            newList.add(o);
-            arrays.put(key,newList);
-            return;
-        }
-        values.put(key,o);
-    }
-
     @Override
     public String toString() {
         StringBuilder sb=new StringBuilder();
